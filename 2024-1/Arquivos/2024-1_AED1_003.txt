@@ -1,0 +1,543 @@
+PUC-Minas - ICEI - Ciência da Computação
+Algoritmos e Estruturas de Dados I - Aula 2024-1_003
+Anotações
+___
+
+Resumo da semana
+
+Fases de um algoritmo / programa
+ ____________     _______________     ____________
+|            |   |               |   |            |
+|   dados    |<==|   Entradas    |<==|            |
+|            |   |_______________|   |            |
+|            |    _______________    |            |
+|            |   |               |   | Interfaces |
+|  Memória   |<=>| Processamento |   |    com     |
+|            |   |_______________|   |  Ambiente  |
+|            |    _______________    |            |
+|            |   |               |   |            |
+| resultados |==>|     Saídas    |==>|            |
+|____________|   |_______________|   |____________|
+
+
+1. Dados e representações
+
+
+O que é um "quadrado"?
+
+
+Figura formada com quatro retas de mesmo tamanho.
+
+
+/ / / / 
+
+\ / \ /
+
+
+Figura formada com quatro retas de mesmo tamanho.
+Paralelas.
+
+
+| | | |     __ __ __ __
+
+
+Figura formada com quatro retas de mesmo tamanho.
+Paralelas. Duas a duas.
+
+___         |__
+___  | |         |__
+
+
+Figura formada com quatro retas de mesmo tamanho.
+Paralelas. Duas a duas, conectadas por um ponto comum entre elas.
+
+__          |__ 
+  |__          |__
+     | 
+
+     
+Figura mais próxima da representação de um quadrado.
+
+ __
+|__|
+
+ /\
+ \/
+
+___
+
+1.1 Dados primitivos
+
+                       Interpretação
+                             +
+                            / \
+                           /   \
+                          /     \
+                         / signo \
+                        /         \
+                       /           \
+                      +-------------+
+        Representação       -->        Objeto
+
+                           char
+                            'A'
+                             +
+                            / \
+                           /   \
+                       65 +-----+ 01000001 
+                      int           byte                          
+
+                      
+                          abstrato
+                             |
+               tipos de      |
+            dados  abstratos |     objetos
+                             |
+operação                     |                   representação
+            -----------------+----------------
+extensão                     |                   extensão
+               tipos de      |      ???
+            dados algébricos |
+                             | 
+                          concreto
+___
+
+1.2 Armazenador de dado na memória ( "variável" )
+
+variável = { endereço, tipo, tamanho, formato, nome, valor }
+
+
+Tipos de dados algébricos
+
+ponteiro    0      void       não contém dado, pode conter o endereço (&)
+
+definição   1    #define      pode conter relação de um nome com apenas um dado
+
+lógico     1+1  {false,true}  contém um dentre dois dados possíveis 
+
+número     1:n   int, float   contém um dentre (n) dados possíveis em um intervalo
+
+objeto     x+1    string      descreve um objeto (x) ou nada (nil=NULL=nullptr)
+
+opcional   x+y      ---       descreve um objeto (x) ou um valor opcional (y)
+
+tupla   (x1,x2,...) ( )       compõe-se de uma lista de dados (argumentos)
+
+___
+
+1.4 Tipos de dados primitivos em C/C++
+
+                     números
+                        |
+           +------------+-------------+
+           |                          |
+        inteiros               ponto flutuante
+           |                          |
+  +-----+-----+----+----+        +----+----+
+  |     |     |    |    |        |         |
+bool short  int  long char     float     double
+
+
+Caracteres
+
+'0' = 48 = 30h
+'A' = 65 = 41h
+'a' = 97 = 61h 
+
+Tipos de dados primitivos em C/C++ - Resumo
+
+tipo  bits  fmt    valor mínimo                   valor máximo
+                                                  
+bool   1/8  %d     false / true
+                                                  
+char	 8  %c	   0                              2**8 -1 = 255
+                                                      
+short	16  %d    -2**15 = -32768                 2**15-1 = +32767
+int     32  %d,%i -2**31 = -2147483648            2**31-1 = +2147483647
+long	64  %ld   -2**63 = -9223372036854775808L  2**63-1 = +9223372036854775807L
+                                                      
+float	32  %f    -10**-38f     (IEEE-754)        10**38f     (IEEE-754)
+double	64  %lf   -10**-308     (IEEE-754)        10**308     (IEEE-754)
+
+___
+
+2. Operações sobre dados
+
+2.1 Operações lógicas
+
+Negação ( ! - NOT ("não") )
+
+lógico  resultado ( ! a )
+false               true
+true                false
+
+Exemplo:
+
+bool a = false;
+bool b = ! a;   // b = true;
+bool c = ! b;   // c = false = ! b = ! (!a) = a;
+
+___
+
+Conjunção ( && - AND ("e") )
+
+  a       b      resultado ( a && b = a AND b )
+false   false    false
+false   true     false
+true    false    false
+true    true     true
+
+Exemplo:
+
+bool a = false;
+bool b = true ;
+bool c = a && b;   // c = false;
+
+___
+
+Disjunção  ( || - OR ("ou") )
+
+  a       b       resultado ( a || b = a OR b )
+false   false     false
+false   true      true
+true    false     true
+true    true      true
+
+Exemplo:
+
+bool a = false;
+bool b = true ; 
+bool c = a || b;   // c = true;
+
+___
+
+Disjunção Exclusiva ( ^ - XOR ("ou_exclusivo") )
+
+  a      b      resultado ( a || b )
+false  false    false
+false  true     true
+true   false    true
+true   true     FALSE <- OBSERVAÇÃO !!!
+
+Exemplo:
+
+bool a = false;
+bool b = true ;
+bool c = a ^ b;   // c = true;
+     c = a ^ a;   // c = false;
+     c = b ^ b;   // c = FALSE;
+
+___
+	 
+2.2 Operações aritméticas
+
+Prioridade
+ * / %    (multiplicação, divisão e resto inteiro)
+  + -     (adição, subtração)
+  
+Exemplos:
+
+int a = 2;
+int b = 3;
+
+int c = a + b;                      // c = 5
+int d = a * b;                      // d = 6
+int e = a / b;                      // e = 0
+int f = b / a;                      // f = 1
+int g = a % b;                      // g = 2
+int h = b % a;                      // h = 1
+int i = a % 2;                      // i = 0
+int j = b % 2;                      // j = 1
+
+int k = a + b * 2;                  // k = 2 + (3*2) = 2 + 6 =  8
+int l = (a+b) * 2;                  // l = (2+3) *2  = 5 * 2 = 10
+
+int m = a + 6 + 2 + 5;              // m = ((2+6)+2)+5  = 15
+int n = a + 6 / 2 + 5;              // n = (2+(6/2))+5  = 10
+int o = a + 6 / 2 * 5;              // o =  2+((6/2)*5) = 17
+int p = a + 6 / (2*5);              // p =  2+(6/(2*5)) =  2
+int q = (a+6) / (2*5);              // q = (2+6)/(2*5)  =  0
+
+double r = a /  b;                  // r = (2/3) = 0.0
+double s = a / (b*1.0);             // s =  2/(3*1.0)   = 2   / 3.0 = 0.6666
+double t = 1.0 * a / b;             // t = (1.0*2)/ 3   = 2.0 / 3   = 0.6666
+double u = (double) a / b;          // u =  2.0   / 3   = 0.6666
+double v = a / (double) b;          // v =  2     / 3.0 = 0.6666
+double w = (double) a / (double) b; // w =  2.0   / 3.0 = 0.6666
+double x = 4 * 3 / (double) 2;      // x = (4*3)  / 2.0 = 6.0000
+
+___
+
+2.3 Operações relacionais
+
+Prioridade
+< <=  >= >   (menor, menor ou igual, maior ou igual, maior)
+  ==  !=     (igualdade, diferença)
+
+___  
+
+3. Estruturas de controle
+
+3.1 Sequência
+
+    inicio
+   ___|___
+  |       |
+  |       | // bloco de acoes
+  |_______|
+      |
+     fim
+     
+{ // inicio do bloco
+     acao1( ); acao2( );
+     acao3( );
+} // fim    do bloco
+
+            
+3.2 Alternativas
+
+1.2.1 Alternativa simples
+
+           if           
+            |           
+     +--  (test) --+     
+     | T         F |     
+ ____v____         | 
+|         |        |
+|         |        |
+|_________|        |
+     |             |     
+     +----> + <----+     
+            |            
+            v            
+
+if ( teste )
+{ // verdadeiro
+     acao1( ); acao2( );
+     acao3( );
+} // fim    do bloco
+
+3.2.2 Alternativa dupla
+
+           if           
+            |           
+     +--  (test) --+     
+     | T         F |     
+ ____v____     ____v____ 
+|         |   |         |
+|         |   |         |
+|_________|   |_________|
+     |             |     
+     +----> + <----+     
+            |            
+            v  
+            
+if ( teste )
+{ // verdadeiro
+     acao1( ); acao2( );
+     acao3( );
+} // fim    do primeiro bloco
+else
+{ // falso
+     acao4( ); 
+     acao5( );
+} // fim    do segundo  bloco
+
+3.2.3 Alternativa múltipla
+
+         switch           
+            |           
+     +-- (option) --+---------------+ // opcional    
+     | case 0:      | case 1:  ...  | default:     
+ ____v____      ____v____       ____v____
+|         |    |         |     |         |
+|         |    |         |     |         |
+|_________|    |_________|     |_________| 
+     |              |               |
+     +----> + <-----+ <-------------+     
+            |            
+            v  
+            
+switch ( opcao )
+{ // se opcao for igual a ...
+  case 0:
+    acao1( ); acao2( );
+   break;
+  case 1:
+    acao3( );
+   break;
+  case 2:
+    acao4( );
+   break;
+  default: // opcional (nenhuma das anteriores)
+    acao5( );
+   break;
+} // fim    do bloco
+
+3.3 Repetições
+
+3.3.1 Repetição com teste no início
+
+          while        
+            |          
+  +----> (test) ------+
+  |      T  |       F |
+  |     ____v____     |
+  |    |         |    |
+  |    |         |    |
+  |    |_________|    |
+  |         |         |
+  +---------+         |
+            |         |
+            +<--------+
+            |          
+            v          
+
+acao1( );   // inicio
+// testar antes de fazer (preventiva)
+while ( teste ) 
+{
+  acao2( ); acao3( );
+  acao4( ); // variacao
+} // fim    do bloco
+
+3.3.2 Repetição com teste no início e variação
+
+// testar antes de fazer (preventiva)
+for ( inicio; teste; variacao )
+{
+  acao2( ); acao3( );
+  acao4( ); // variacao
+} // fim    do bloco
+
+3.3.3 Repetição com teste no fim
+
+         do-while
+            |    
+  +-------> +     
+  |         |     
+  |     ____v____ 
+  |    |         |
+  |    |         |
+  |    |_________|
+  | T       |     
+  +------ (test)  
+            | F   
+            v     
+
+acao1( );   // inicio
+// testar depois de fazer (corretiva)
+do
+{
+  acao2( ); acao3( );
+  acao4( ); // variacao
+}
+while ( teste );
+
+___
+
+4. Abstrações de comandos
+
+4.1 Função
+
+// definicao
+tipo f ( parametro(s) ) // formal
+{
+    tipo valor = padrao;
+  
+ // bloco 
+    acao1( );
+    acao2( ); acao3( );
+  
+    return ( valor ); 
+} // fim funcao f ( )
+  
+// uso
+...
+{
+   tipo y = inicial;
+   
+   acao1( );
+   y = f ( x ); // chamada
+   acao2( );   
+}
+
+   Chamada da função
+
+          y = f ( x );       
+                  |   substituição de parâmetro
+                  v			  
+              f ( parametro=x ) // atual 
+                  |
+		  +-------------+     
+                  .    chamada  |     
+                  .         ____v____ 
+                  .        |         |
+                  .        |         |
+                  .        |_________|
+                  .             | 
+                  .    retorno  |     
+          y =  valor; <---------+     
+            |               
+            v               
+
+
+4.2 Procedimento
+
+// definicao
+void p ( parametros )
+{
+  acao1( );
+  acao2( ); acao3( );
+} // fim procedimento p ( )
+
+// uso
+...
+{
+   acao1( );
+   p  ( x ); // chamada
+   acao2( );   
+}
+
+   Chamada de procedimento
+          p ( x );       
+              |   substituição de parâmetro
+              v			  
+              p ( parametro=x ) // atual 
+              |               
+              + --------+     
+              . chamada |     
+              .     ____v____ 
+              .    |         |
+              .    |         |
+              .    |_________|
+              .         |       // sem retorno de valor
+              + <-------+     
+              |               
+              v               
+___
+
+5. Entradas e saídas
+
+Biblioteca io.h / io.hpp
+
+// entradas de dados
+bool   b_x = IO_readbool   ( "b_x = " );
+char   c_x = IO_readchar   ( "c_x = " );
+int    i_x = IO_readint    ( "i_x = " );
+double d_x = IO_readdouble ( "d_x = " );
+
+// saidas de mensagens/resultados
+IO_print   ( texto ); // sem mudar de linha
+IO_println ( texto ); //     mudar de linha
+
+// saidas de mensagens/resultados formatadas
+IO_printf  ( "formato", valor ); 
+IO_printf  ( "%d" , b_x ); 
+IO_printf  ( "%c" , c_x ); 
+IO_printf  ( "%i" , i_x ); 
+IO_printf  ( "%lf", d_x ); 
+IO_printf  ( "%s" , "mensagem" ); 
+IO_printf  ( "\n" );  // mudar de linha 
+
+__
